@@ -1,0 +1,16 @@
+server:
+  port: 8888
+spring:
+  application:
+    name: CONFIG-SERVICE
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/kratos2333/config-server-repo
+          clone-on-start: true
+          default-label: main
+eureka:
+  client:
+    serverUrl:
+      defaultZone: http://localhost:8761/eureka/

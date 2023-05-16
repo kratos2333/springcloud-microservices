@@ -1,0 +1,49 @@
+#server:
+#  port: 8080
+spring:
+  application:
+    name: DEPARTMENT-SERVICE
+  config:
+    import: optional:configserver:http://localhost:8888
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+#  datasource:
+#    password: password
+#    url: jdbc:postgresql://localhost:5432/department_db
+#    username: kevinjia
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+##      ddl-auto: create-drop # clean   each time
+#    properties:
+#      hibernate:
+#        dialect: org.hibernate.dialect.PostgreSQLDialect
+#        format_sql: true
+#    show-sql: true
+#eureka:
+#  client:
+#      serverUrl:
+#        defaultZone: http://localhost:8761/eureka/
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          servlet:
+            DispatcherServlet: DEBUG
+  pattern:
+    level: '%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]'

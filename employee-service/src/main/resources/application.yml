@@ -1,0 +1,77 @@
+#server:
+#  port: 8081
+spring:
+  application:
+    name: EMPLOYEE-SERVICE
+  config:
+    import: optional:configserver:http://localhost:8888
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+#  datasource:
+#    password: password
+#    url: jdbc:postgresql://localhost:5432/employee_db
+#    username: kevinjia
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#    #      ddl-auto: create-drop # clean   each time
+#    properties:
+#      hibernate:
+#        dialect: org.hibernate.dialect.PostgreSQLDialect
+#        format_sql: true
+#    show-sql: true
+#eureka:
+#  client:
+#    serverUrl:
+#      defaultZone: http://localhost:8761/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+  # Actuator endpoints for Circuit Breaker
+  health:
+    circuitbreakers:
+      enabled: true
+  endpoint:
+    health:
+      show-details: always
+resilience4j:
+  # Circuit Breaker Configuration
+  circuitbreaker:
+    instances:
+      EMPLOYEE-SERVICE:
+        registerHealthIndicator: true
+        failureRateThreshold: 50
+        minimumNuberOfCalls: 5
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 5s
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+  # retry configuration
+  retry:
+    instances:
+      EMPLOYEE-SERVICE:
+        registerHealthIndicator: true
+        maxRetryAttempts: 5
+        waitDuration: 1s
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          servlet:
+            DispatcherServlet: DEBUG
+  pattern:
+    level: '%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]'
